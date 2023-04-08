@@ -25,5 +25,35 @@ namespace cs_api.Controllers
             if (item == null) return NotFound();
             return item;
         }
+
+        [HttpPost]
+        public IActionResult Create(TodoItem item)
+        {
+            item.Id = items.Max(i => i.Id) + 1;
+            items.Add(item);
+
+            return CreatedAtRoute("Todo", new { id = item.Id }, item);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult Update(int id, TodoItem item)
+        {
+            var target = items.Find(i => i.Id == id);
+            if (target == null) return NotFound();
+
+            target.Name = item.Name;
+            target.IsDone = item.IsDone;
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            var n = items.RemoveAll(i => i.Id == id);
+            if (n == 0) return NotFound();
+
+            return NoContent();
+        }
     }
 }
